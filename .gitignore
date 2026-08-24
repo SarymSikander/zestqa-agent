@@ -7,3 +7,4 @@ logs/
 __pycache__/
 tools/exploration_output/
 .project/
+PROJECT.md
