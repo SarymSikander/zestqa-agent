@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZestQA — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg:      #0a0a0a;
+      --panel:   #131313;
+      --border:  #232323;
+      --text:    #ffffff;
+      --text2:   #9a9a9a;
+      --text3:   #5f5f5f;
+      --accent:  #7e56ef;
+      --accent-h:#9373f2;
+      --error:   #f36b6b;
+      --error-bg:rgba(243,107,107,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 32px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .brand-mark {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #4a2fb0);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 15px; color: #fff;
+    }
+    .brand-name { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+    h1 { font-size: 21px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .subtitle { color: var(--text2); font-size: 13.5px; margin-bottom: 26px; }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .field { margin-bottom: 16px; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      background: #0e0e0e;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: 9px;
+      padding: 11px 13px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(126,86,239,0.18);
+    }
+    input::placeholder { color: var(--text3); }
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-bottom: 22px;
+    }
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--accent);
+      width: 15px; height: 15px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checkbox-row label {
+      font-size: 12.5px;
+      color: var(--text2);
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 400;
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+    .checkbox-row a { color: var(--accent); text-decoration: none; }
+    .checkbox-row a:hover { text-decoration: underline; }
+    button.primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px;
+      font-size: 14.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s, opacity .15s;
+    }
+    button.primary:hover { background: var(--accent-h); }
+    button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+    .switch a { color: var(--accent); text-decoration: none; font-weight: 600; cursor: pointer; }
+    .switch a:hover { text-decoration: underline; }
+    .msg {
+      display: none;
+      font-size: 12.5px;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .msg.error { display: block; background: var(--error-bg); color: var(--error); border: 1px solid rgba(243,107,107,0.25); }
+    .msg.info { display: block; background: rgba(126,86,239,0.08); color: #b9a4f7; border: 1px solid rgba(126,86,239,0.25); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-mark">Z</div>
+    <div class="brand-name">ZestQA</div>
+  </div>
+
+  <div id="msg-box" class="msg"></div>
+
+  <!-- Sign In -->
+  <div id="signin-view">
+    <h1>Sign in</h1>
+    <div class="subtitle">Welcome back. Enter your details to continue.</div>
+    <form id="signin-form" onsubmit="return false;">
+      <div class="field">
+        <label for="si-email">Email</label>
+        <input type="email" id="si-email" required autocomplete="email" placeholder="you@company.com" />
+      </div>
+      <div class="field" style="margin-bottom: 22px;">
+        <label for="si-password">Password</label>
+        <input type="password" id="si-password" required autocomplete="current-password" placeholder="••••••••" />
+      </div>
+      <button type="submit" class="primary" id="signin-btn" onclick="handleSignIn()">Sign in</button>
+    </form>
+    <div class="switch">Don't have an account? <a onclick="showView('signup')">Sign up</a></div>
+  </div>
+
+  <!-- Sign Up -->
+  <div id="signup-view" class="hidden">
+    <h1>Create your account</h1>
+    <div class="subtitle">Set up your QA agent in a few minutes.</div>
+    <form id="signup-form" onsubmit="return false;">
+      <div class="field">
+        <label for="su-name">Full name</label>
+        <input type="text" id="su-name" required autocomplete="name" placeholder="Jane Doe" />
+      </div>
+      <div class="field">
+        <label for="su-email">Email</label>
+        <input type="email" id="su-email" required autocomplete="email" placeholder="you@company.com" />
+      </div>
+      <div class="field">
+        <label for="su-password">Password</label>
+        <input type="password" id="su-password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" />
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="su-terms" required />
+        <label for="su-terms">I agree to the <a href="#" onclick="event.stopPropagation()">Terms and Conditions</a></label>
+      </div>
+      <button type="submit" class="primary" id="signup-btn" onclick="handleSignUp()">Create Account</button>
+    </form>
+    <div class="switch">Already have an account? <a onclick="showView('signin')">Sign in</a></div>
+  </div>
+</div>
+
+<script>
+  // Public Supabase project URL + anon key. The anon key is safe to ship in
+  // client code — access is enforced by the RLS policies in
+  // platform/supabase/schema.sql, not by keeping this key secret.
+  const SUPABASE_URL = 'https://xkgyxyynchrayuitizrg.supabase.co';
+  const SUPABASE_ANON_KEY = 'REPLACE_WITH_YOUR_SUPABASE_ANON_KEY';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const ONBOARDING_URL = 'onboarding.html';
+
+  function showView(view) {
+    document.getElementById('signin-view').classList.toggle('hidden', view !== 'signin');
+    document.getElementById('signup-view').classList.toggle('hidden', view !== 'signup');
+    hideMsg();
+  }
+
+  function showMsg(text, type) {
+    const box = document.getElementById('msg-box');
+    box.textContent = text;
+    box.className = 'msg ' + type;
+  }
+  function hideMsg() {
+    const box = document.getElementById('msg-box');
+    box.className = 'msg';
+    box.textContent = '';
+  }
+
+  function setBusy(btnId, busy, label) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = busy;
+    btn.textContent = busy ? label : (btnId === 'signin-btn' ? 'Sign in' : 'Create Account');
+  }
+
+  async function handleSignUp() {
+    hideMsg();
+    const full_name = document.getElementById('su-name').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const password = document.getElementById('su-password').value;
+    const agreed = document.getElementById('su-terms').checked;
+
+    if (!full_name || !email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
+    if (!agreed) { showMsg('Please agree to the Terms and Conditions to continue.', 'error'); return; }
+    if (password.length < 8) { showMsg('Password must be at least 8 characters.', 'error'); return; }
+
+    setBusy('signup-btn', true, 'Creating account…');
+    const { data, error } = await supabase.auth.signUp({
+      email, password,
+      options: { data: { full_name } },
+    });
+    setBusy('signup-btn', false);
+
+    if (error) { showMsg(error.message, 'error'); return; }
+
+    if (data.session) {
+      window.location.href = ONBOARDING_URL;
+    } else {
+      showMsg('Account created — check your email to confirm it, then sign in.', 'info');
+      showView('signin');
+    }
+  }
+
+  async function handleSignIn() {
+    hideMsg();
+    const email = document.getElementById('si-email').value.trim();
+    const password = document.getElementById('si-password').value;
+    if (!email || !password) { showMsg('Please enter your email and password.', 'error'); return; }
+
+    setBusy('signin-btn', true, 'Signing in…');
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setBusy('signin-btn', false);
+      showMsg(error.message, 'error');
+      return;
+    }
+
+    const { data: profile, error: profileErr } = await supabase
+      .from('profiles')
+      .select('hf_space_url')
+      .eq('id', data.user.id)
+      .single();
+    setBusy('signin-btn', false);
+
+    if (!profileErr && profile && profile.hf_space_url) {
+      window.location.href = profile.hf_space_url;
+    } else {
+      window.location.href = ONBOARDING_URL;
+    }
+  }
+
+  // If already signed in, skip straight past the login form.
+  (async function redirectIfSignedIn() {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('hf_space_url')
+        .eq('id', data.session.user.id)
+        .single();
+      window.location.href = (profile && profile.hf_space_url) ? profile.hf_space_url : ONBOARDING_URL;
+    }
+  })();
+</script>
+</body>
+</html>
