@@ -721,7 +721,6 @@
     .toast.success { border-color: rgba(5,150,105,0.3); background: rgba(5,150,105,0.03); }
     .toast.error   { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.03); }
     .toast.warn    { border-color: rgba(217,119,6,0.3); background: rgba(217,119,6,0.03); }
-    .toast-icon    { font-size: 15px; flex-shrink: 0; }
     .toast-msg     { flex: 1; color: var(--text); line-height: 1.4; }
     .toast-close   { cursor: pointer; color: var(--text3); font-size: 16px; line-height: 1; flex-shrink: 0; }
     .toast-close:hover { color: var(--text); }
@@ -1641,7 +1640,7 @@
             </div>
             <div class="text-xs text-muted">Last run <span id="ov-last-staging">—</span></div>
             <button class="btn btn-primary" id="ov-run-staging" onclick="ovRunEnv('staging')">
-              <div class="spin"></div><span class="label">▶ Run All Tests</span>
+              <div class="spin"></div><span class="label">Run All Tests</span>
             </button>
           </div>
           <!-- Production -->
@@ -1655,7 +1654,7 @@
             </div>
             <div class="text-xs text-muted">Last run <span id="ov-last-production">—</span></div>
             <button class="btn btn-primary" id="ov-run-production" onclick="ovRunEnv('production')">
-              <div class="spin"></div><span class="label">▶ Run All Tests</span>
+              <div class="spin"></div><span class="label">Run All Tests</span>
             </button>
           </div>
         </div>
@@ -1695,7 +1694,7 @@
             </div>
             <div style="margin-left:auto">
               <button class="btn btn-primary btn-lg" id="test-run-btn" onclick="testsRun()">
-                <div class="spin"></div><span class="label">▶  Run Tests</span>
+                <div class="spin"></div><span class="label">Run Tests</span>
               </button>
             </div>
           </div>
@@ -1710,7 +1709,7 @@
 
         <div class="flex-between mb16">
           <div class="section-title" style="margin:0">Results <span class="count" id="test-count">0</span></div>
-          <button class="btn btn-secondary btn-sm" onclick="exportResults()">⬇ Export CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportResults()">Export CSV</button>
         </div>
         <div class="tbl-wrap mb24">
           <table>
@@ -1740,8 +1739,8 @@
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
               <div class="card-title" style="margin-bottom:0">Create Ticket</div>
               <div style="display:flex;gap:6px;align-items:center">
-                <button class="btn btn-secondary btn-sm hidden" id="regen-ticket-btn" onclick="openGenTicketModal()" title="Regenerate with AI">🔄 Regenerate</button>
-                <button class="btn btn-secondary btn-sm" onclick="openGenTicketModal()">✨ Generate Ticket</button>
+                <button class="btn btn-secondary btn-sm hidden" id="regen-ticket-btn" onclick="openGenTicketModal()" title="Regenerate with AI">Regenerate</button>
+                <button class="btn btn-secondary btn-sm" onclick="openGenTicketModal()">Generate Ticket</button>
               </div>
             </div>
             <div class="form-row form-row-2">
@@ -1755,10 +1754,10 @@
               <div>
                 <label>Issue Type</label>
                 <select id="j-type">
-                  <option value="Bug">🐛 Bug</option>
-                  <option value="Task">✅ Task</option>
-                  <option value="Story">📖 Story</option>
-                  <option value="Epic">⚡ Epic</option>
+                  <option value="Bug">Bug</option>
+                  <option value="Task">Task</option>
+                  <option value="Story">Story</option>
+                  <option value="Epic">Epic</option>
                 </select>
               </div>
             </div>
@@ -1804,7 +1803,7 @@
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <input placeholder="Search tickets…" id="jira-search" oninput="jiraFilter()" style="max-width:180px" />
-                <button class="btn btn-secondary btn-sm" onclick="openSprintModal()" title="Manage Sprint">🏃 Sprint</button>
+                <button class="btn btn-secondary btn-sm" onclick="openSprintModal()" title="Manage Sprint">Sprint</button>
               </div>
             </div>
             <div class="tbl-wrap">
@@ -1825,18 +1824,18 @@
       <div class="page-inner">
         <div class="card mb24">
           <div class="card-title">Generate Health Report</div>
-          <div class="notice warn" style="margin-bottom:14px">⏱ Reports run all three Playwright tests + DB checks.</div>
+          <div class="notice warn" style="margin-bottom:14px">Reports run all three Playwright tests + DB checks.</div>
           <div class="gen-row">
             <div class="gen-btn-wrap">
               <div class="gen-env-label">Staging</div>
               <button class="btn btn-secondary" id="rpt-gen-staging-btn" onclick="reportsGenerate('staging')">
-                <div class="spin"></div><span class="label">🌐 Generate</span>
+                <div class="spin"></div><span class="label">Generate</span>
               </button>
             </div>
             <div class="gen-btn-wrap">
               <div class="gen-env-label">Production</div>
               <button class="btn btn-secondary" id="rpt-gen-production-btn" onclick="reportsGenerate('production')">
-                <div class="spin"></div><span class="label">🚀 Generate</span>
+                <div class="spin"></div><span class="label">Generate</span>
               </button>
             </div>
           </div>
@@ -1930,7 +1929,6 @@
         <!-- 2a. Cloud unavailable notice -->
         <div id="at-unavailable-notice" style="display:none;margin-bottom:20px;padding:16px 18px;border-radius:8px;border:1px solid var(--warn, #e6a817);background:rgba(230,168,23,.08);display:none">
           <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="font-size:20px;line-height:1.2">🖥️</span>
             <div>
               <div style="font-weight:600;color:var(--text);margin-bottom:4px">Not available on cloud</div>
               <div id="at-unavailable-msg" style="font-size:13px;color:var(--text2);line-height:1.5"></div>
@@ -1982,7 +1980,7 @@
                 onclick="event.stopPropagation();atCreateJiraBugs()" style="display:none">
                 <span class="spin" style="display:none"></span> Create All as Jira Tickets
               </button>
-              <button class="at-sec-toggle" id="at-toggle-failed" aria-label="Toggle">▼</button>
+              <button class="at-sec-toggle" id="at-toggle-failed" aria-label="Toggle">▾</button>
             </div>
           </div>
           <div class="at-sec-body" id="at-body-failed">
@@ -1999,7 +1997,7 @@
         <div style="margin-bottom:20px">
           <div class="at-sec-hdr" onclick="atToggleSection('sla')">
             <span class="at-sec-title">SLA Thresholds</span>
-            <button class="at-sec-toggle" id="at-toggle-sla" aria-label="Toggle">▼</button>
+            <button class="at-sec-toggle" id="at-toggle-sla" aria-label="Toggle">▾</button>
           </div>
           <div class="at-sec-body" id="at-body-sla">
             <div class="tbl-wrap">
@@ -2015,7 +2013,7 @@
         <div style="margin-bottom:20px">
           <div class="at-sec-hdr" onclick="atToggleSection('dead')">
             <span class="at-sec-title">Dead Endpoints</span>
-            <button class="at-sec-toggle" id="at-toggle-dead" aria-label="Toggle">▼</button>
+            <button class="at-sec-toggle" id="at-toggle-dead" aria-label="Toggle">▾</button>
           </div>
           <div class="at-sec-body" id="at-body-dead">
             <div id="at-dead-list" style="color:var(--text3);font-size:13px">Loading…</div>
@@ -2026,7 +2024,7 @@
         <div style="margin-bottom:20px">
           <div class="at-sec-hdr" onclick="atToggleSection('inventory')">
             <span class="at-sec-title">Endpoint Inventory</span>
-            <button class="at-sec-toggle" id="at-toggle-inventory" aria-label="Toggle">▼</button>
+            <button class="at-sec-toggle" id="at-toggle-inventory" aria-label="Toggle">▾</button>
           </div>
           <div class="at-sec-body" id="at-body-inventory">
             <div class="tbl-wrap">
@@ -2042,7 +2040,7 @@
         <div style="margin-bottom:8px">
           <div class="at-sec-hdr" onclick="atToggleSection('baseline')">
             <span class="at-sec-title">Baseline Log</span>
-            <button class="at-sec-toggle" id="at-toggle-baseline" aria-label="Toggle">▼</button>
+            <button class="at-sec-toggle" id="at-toggle-baseline" aria-label="Toggle">▾</button>
           </div>
           <div class="at-sec-body" id="at-body-baseline">
             <div id="at-baseline-log" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;max-height:320px;overflow-y:auto;font-size:12px;color:var(--text2)">Loading…</div>
@@ -2163,7 +2161,7 @@
       <div class="rqa-actions">
         <button class="btn btn-secondary" onclick="closeRunQAModal()">Cancel</button>
         <button class="btn btn-primary" id="rqa-confirm-btn" onclick="confirmRunQA()">
-          <div class="spin"></div><span class="label">▶ Run QA</span>
+          <div class="spin"></div><span class="label">Run QA</span>
         </button>
       </div>
     </div>
@@ -2205,7 +2203,7 @@
   </div>
   <div class="panel-footer" id="jira-panel-footer">
     <button class="btn btn-primary w100" id="jira-run-qa-btn" onclick="openRunQAModal()" style="justify-content:center;margin-bottom:8px">
-      <div class="spin"></div><span class="label">▶ Run QA</span>
+      <div class="spin"></div><span class="label">Run QA</span>
     </button>
     <div style="height:1px;background:var(--border);margin-bottom:12px"></div>
     <label>Add Comment</label>
@@ -2228,10 +2226,10 @@
     </div>
     <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--border)">
       <button class="btn btn-primary btn-sm" id="sprint-start-btn" onclick="doStartSprint()" style="flex:1;justify-content:center">
-        <div class="spin"></div><span class="label">▶ Start Sprint</span>
+        <div class="spin"></div><span class="label">Start Sprint</span>
       </button>
       <button class="btn btn-danger btn-sm" id="sprint-end-btn" onclick="doEndSprint()" style="flex:1;justify-content:center">
-        <div class="spin"></div><span class="label">⏹ End Sprint</span>
+        <div class="spin"></div><span class="label">End Sprint</span>
       </button>
       <button class="btn btn-secondary btn-sm" onclick="closeSprintModal()">Close</button>
     </div>
@@ -2313,7 +2311,7 @@
 <div id="gen-ticket-modal" class="modal-overlay" onclick="if(event.target===this)closeGenTicketModal()">
   <div class="modal-box" style="max-width:520px">
     <div class="modal-header">
-      <div class="modal-title">✨ Generate Ticket with AI</div>
+      <div class="modal-title">Generate Ticket with AI</div>
       <div class="modal-close" onclick="closeGenTicketModal()">✕</div>
     </div>
     <div class="modal-body" style="overflow:visible">
@@ -2334,9 +2332,9 @@
         <div>
           <label>Issue Type</label>
           <select id="gen-ticket-type">
-            <option value="Bug">🐛 Bug</option>
-            <option value="Story">📖 Story</option>
-            <option value="Task">✅ Task</option>
+            <option value="Bug">Bug</option>
+            <option value="Story">Story</option>
+            <option value="Task">Task</option>
           </select>
         </div>
       </div>
@@ -2346,10 +2344,10 @@
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-primary" id="gen-ticket-btn" onclick="genTicket()" style="flex:1;justify-content:center">
-          <div class="spin"></div><span class="label">✨ Generate</span>
+          <div class="spin"></div><span class="label">Generate</span>
         </button>
         <button class="btn btn-secondary" id="gen-ticket-regen-modal-btn" onclick="genTicket()" style="justify-content:center;display:none">
-          <div class="spin"></div><span class="label">🔄 Regenerate</span>
+          <div class="spin"></div><span class="label">Regenerate</span>
         </button>
       </div>
     </div>
@@ -2713,10 +2711,9 @@ const state = {
 // Toast
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function toast(msg, type = 'info', dur = 3000) {
-  const icons = { success: '✅', error: '❌', warn: '⚠️', info: 'ℹ️' };
   const el = document.createElement('div');
   el.className = `toast ${type}`;
-  el.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span><span class="toast-close" onclick="this.parentElement.remove()">✕</span>`;
+  el.innerHTML = `<span class="toast-msg">${msg}</span><span class="toast-close" onclick="this.parentElement.remove()">✕</span>`;
   document.getElementById('toast-container').appendChild(el);
   setTimeout(() => el.remove(), dur);
 }
@@ -3046,7 +3043,7 @@ async function ovRunEnv(env) {
     toast(e.message, 'error');
   } finally {
     btnLoad(btn, false);
-    btn.querySelector('.label').textContent = '▶ Run All Tests';
+    btn.querySelector('.label').textContent = 'Run All Tests';
   }
 }
 
@@ -3244,7 +3241,7 @@ function renderJiraTable(rows) {
         <td onclick="event.stopPropagation()">
           <div style="display:flex;gap:4px">
             <button class="btn btn-sm btn-danger" onclick="jiraClose('${esc(t.key)}')">Close</button>
-            <button class="btn btn-sm btn-secondary" onclick="jiraComment('${esc(t.key)}')">💬</button>
+            <button class="btn btn-sm btn-secondary" onclick="jiraComment('${esc(t.key)}')">Comment</button>
           </div>
         </td>
       </tr>
@@ -3469,13 +3466,13 @@ async function reportsLoad() {
       const envMatch = r.filename.match(/health_([^_]+)_/);
       const envName  = envMatch ? envMatch[1] : 'unknown';
       return `<div class="report-card fade-in">
-        <div class="report-icon">📋</div>
+        <div class="report-icon"></div>
         <div class="report-info">
           <div class="report-name">${esc(r.filename)}</div>
           <div class="report-meta">${esc(envName)} · ${fmtDate(r.modified)} · ${fmtBytes(r.size)}</div>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="reportsLoadView('${esc(r.filename)}')">View</button>
-        <a class="btn btn-secondary btn-sm" href="${API_BASE}/reports/${encodeURIComponent(r.filename)}" download>⬇</a>
+        <a class="btn btn-secondary btn-sm" href="${API_BASE}/reports/${encodeURIComponent(r.filename)}" download>Download</a>
       </div>`;
     }).join('');
   } catch(e) { console.error(e); }
@@ -3595,7 +3592,7 @@ async function openJiraPanel(key) {
       <div class="panel-meta-row">
         ${jiraBadge(d.status)}
         <span class="badge badge-neutral" style="font-size:10.5px">${esc(d.issue_type||'—')}</span>
-        <a href="${esc(d.url||'')}" target="_blank" class="badge badge-info" style="text-decoration:none">↗ Open in Jira</a>
+        <a href="${esc(d.url||'')}" target="_blank" class="badge badge-info" style="text-decoration:none">Open in Jira</a>
       </div>
       <div class="panel-section">
         <div class="panel-label">Assignee</div>
@@ -3707,7 +3704,7 @@ function _renderPageCheckboxes(section, portal, allPages) {
       const grpId = 'rqa-grp-' + grp.toLowerCase();
       html += `<div class="rqa-page-group">
         <div class="rqa-page-group-header" onclick="togglePageGroup('${grpId}')">
-          <span id="${grpId}-arrow" style="font-size:10px">▼</span> ${esc(grp)} Portal
+          <span id="${grpId}-arrow" style="font-size:10px">▾</span> ${esc(grp)} Portal
         </div>
         <div class="rqa-page-group-body" id="${grpId}">`;
       for (const p of grpPages) {
@@ -3807,7 +3804,7 @@ function togglePageGroup(id) {
   if (!body) return;
   const isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : '';
-  if (arrow) arrow.textContent = isOpen ? '▶' : '▼';
+  if (arrow) arrow.textContent = isOpen ? '▸' : '▾';
 }
 
 function toggleAllPages(labelEl) {
@@ -4071,8 +4068,8 @@ function _showQAFinalResult(result, error) {
       const failCount = log.filter(e => e.result !== 'pass').length;
       const totalCount = log.length;
       const statusSummary = r.status === 'PASS'
-        ? '✅ All checks passed'
-        : `❌ ${failCount} bug${failCount !== 1 ? 's' : ''} confirmed`;
+        ? 'All checks passed'
+        : `${failCount} bug${failCount !== 1 ? 's' : ''} confirmed`;
       const msgSummary = failCount > 0 ? `${failCount}/${totalCount} checks failed` : '';
 
       const tableRows = log.map(entry => {
@@ -4120,7 +4117,9 @@ function _showQAFinalResult(result, error) {
         </div>`;
     }
 
-    const icon = r.status === 'PASS' ? '✅' : '❌';
+    const statusLabel = r.status === 'PASS'
+      ? '<span style="color:var(--success);font-weight:700">PASS</span>'
+      : '<span style="color:var(--error);font-weight:700">FAIL</span>';
 
     // step screenshots strip
     const shots = (r.screenshots || []);
@@ -4167,7 +4166,7 @@ function _showQAFinalResult(result, error) {
     return `
       <div class="qa-result-row" style="flex-direction:column;align-items:stretch;padding:12px 14px;gap:8px">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:15px">${icon}</span>
+          <span style="font-size:15px">${statusLabel}</span>
           <span style="font-weight:600;text-transform:capitalize;flex:1">${esc(r.portal)}</span>
           <span style="font-size:11px;color:var(--text3)">${r.load_time_ms || 0}ms</span>
           ${r.status !== 'PASS' ? `<span style="font-size:11.5px;color:var(--error);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.message||'')}">${esc(r.message||'')}</span>` : `<span style="font-size:11px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">${esc(r.url||'')}</span>`}
@@ -4200,7 +4199,7 @@ function _showQAFinalResult(result, error) {
       ${tcRows ? `<div class="panel-label" style="margin:14px 0 8px">Generated Test Cases</div><div class="qa-tc-list">${tcRows}${test_cases.length > 4 ? `<div style="color:var(--text3);font-size:12px;text-align:center;margin-top:6px">+${test_cases.length-4} more in Jira comments</div>` : ''}</div>` : ''}
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn btn-secondary btn-sm" style="justify-content:center;flex:1" onclick="openJiraPanel('${esc(result.issue_key)}')">↻ Refresh Ticket</button>
-        ${report_markdown ? `<button class="btn btn-secondary btn-sm" style="justify-content:center;flex:1" onclick="_showQAReport()">📄 View Full Report</button>` : ''}
+        ${report_markdown ? `<button class="btn btn-secondary btn-sm" style="justify-content:center;flex:1" onclick="_showQAReport()">View Full Report</button>` : ''}
       </div>
     </div>`;
   area.classList.remove('hidden');
@@ -4249,7 +4248,7 @@ async function openPRPanel(repo, number, title) {
       </div>
       <div class="panel-meta-row">
         <span class="badge badge-neutral">${esc(String(d.changed_files||0))} files changed</span>
-        <a href="${esc(d.url||'')}" target="_blank" class="badge badge-info" style="text-decoration:none">↗ Open on GitHub</a>
+        <a href="${esc(d.url||'')}" target="_blank" class="badge badge-info" style="text-decoration:none">Open on GitHub</a>
       </div>
       ${d.body ? `<div class="panel-section">
         <div class="panel-label">Description</div>
@@ -4372,7 +4371,7 @@ function atToggleSection(key) {
   if (!body) return;
   const closing = !body.classList.contains('collapsed');
   body.classList.toggle('collapsed', closing);
-  if (toggle) toggle.textContent = closing ? '▶' : '▼';
+  if (toggle) toggle.textContent = closing ? '▸' : '▾';
   sessionStorage.setItem('at_sec_' + key, closing ? 'closed' : 'open');
 }
 
@@ -4383,7 +4382,7 @@ function atRestoreSections() {
     const toggle = document.getElementById('at-toggle-' + key);
     if (!body) return;
     body.classList.toggle('collapsed', closed);
-    if (toggle) toggle.textContent = closed ? '▶' : '▼';
+    if (toggle) toggle.textContent = closed ? '▸' : '▾';
   });
 }
 
@@ -4562,9 +4561,9 @@ function atRenderTerminal(data, perfMetrics = []) {
   }
 
   function _perfColors(result) {
-    return result === 'PASS' ? { col: '#3fb950', icon: '✅' }
-         : result === 'WARN' ? { col: '#d29922', icon: '⚠️' }
-         :                     { col: '#f85149', icon: '❌' };
+    return result === 'PASS' ? { col: '#3fb950' }
+         : result === 'WARN' ? { col: '#d29922' }
+         :                     { col: '#f85149' };
   }
 
   // ── Prominent response-time card for single-endpoint runs ──────────────────
@@ -4572,47 +4571,47 @@ function atRenderTerminal(data, perfMetrics = []) {
     const hits  = perfMetrics.filter(e => e.label && e.label.endsWith(_atLastSingleEndpoint));
     const entry = hits.length ? hits[hits.length - 1] : null;
     if (entry) {
-      const { col, icon } = _perfColors(entry.result);
+      const { col } = _perfColors(entry.result);
       const sla = entry.sla_pass != null ? `≤${entry.sla_pass}ms` : 'n/a';
       const bar = '─'.repeat(33);
       html.push(`<span style="color:#58a6ff">┌${bar}┐</span>`);
       html.push(`<span style="color:#58a6ff">│</span>  <span style="color:#c9d1d9;font-weight:600">${esc(entry.label)}</span>`);
       html.push(`<span style="color:#58a6ff">│</span>  avg: <span style="color:${col};font-weight:600">${entry.avg}ms</span>  ·  p50: ${entry.p50}ms  ·  p95: ${entry.p95}ms`);
       html.push(`<span style="color:#58a6ff">│</span>  SLA: <span style="color:${col}">${esc(sla)}</span>`);
-      html.push(`<span style="color:#58a6ff">│</span>  <span style="color:${col};font-weight:600">${icon} ${entry.result} — within SLA</span>`);
+      html.push(`<span style="color:#58a6ff">│</span>  <span style="color:${col};font-weight:600">${entry.result} — within SLA</span>`);
       html.push(`<span style="color:#58a6ff">└${bar}┘</span>`);
       html.push('');
     }
   }
 
-  // ── Suite test list with inline ⏱ lines after each PERF test ──────────────
+  // ── Suite test list with inline timing lines after each PERF test ─────────
   for (const suite of data.suites || []) {
     html.push(`<span style="color:#58a6ff;font-weight:600">SUITE: ${esc(suite.file)}</span>`);
     for (const t of suite.tests || []) {
       const isPerf = (t.title || '').includes('[PERF]');
       if (t.status === 'passed') {
-        html.push(`  <span style="color:#3fb950">✅ ${esc(t.title)}</span>`);
+        html.push(`  <span style="color:#3fb950">${esc(t.title)}</span>`);
       } else if (t.status === 'failed') {
         const brief = t.error ? ' — ' + esc(t.error.replace(/\n/g,' ').trim().slice(0, 120)) : '';
-        html.push(`  <span style="color:#f85149">❌ ${esc(t.title)}${brief}</span>`);
+        html.push(`  <span style="color:#f85149">${esc(t.title)}${brief}</span>`);
       } else {
-        html.push(`  <span style="color:#8b949e">⏭ ${esc(t.title)}</span>`);
+        html.push(`  <span style="color:#8b949e">${esc(t.title)}</span>`);
       }
 
-      // ⏱ timing summary after each PERF test
+      // Timing summary after each PERF test
       if (isPerf && perfMetrics.length) {
         const ep    = _ep(t.title);
         const entry = ep ? _perf(ep) : null;
         if (entry) {
-          const { col, icon } = _perfColors(entry.result);
+          const { col } = _perfColors(entry.result);
           const sla = entry.sla_pass != null ? `≤${entry.sla_pass}ms` : 'n/a';
           html.push(
-            `  <span style="color:#8b949e">⏱  Response times: ` +
+            `  <span style="color:#8b949e">Response times: ` +
             `avg <span style="color:${col}">${entry.avg}ms</span> · ` +
             `p50 ${entry.p50}ms · ` +
             `p95 ${entry.p95}ms · ` +
             `SLA pass ${sla} · ` +
-            `<span style="color:${col}">${icon} ${entry.result}</span></span>`
+            `<span style="color:${col}">${entry.result}</span></span>`
           );
         }
       }
@@ -4654,7 +4653,7 @@ async function atRunSuite(scope = 'all', singleEndpoint = '') {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      appendLine('⚠ Error: ' + (err.detail || res.statusText));
+      appendLine('Error: ' + (err.detail || res.statusText));
       toast('Run failed: ' + (err.detail || res.statusText), 'error');
       return;
     }
@@ -4662,15 +4661,15 @@ async function atRunSuite(scope = 'all', singleEndpoint = '') {
     const data = await res.json();
 
     if (data.run_id) {
-      appendLine('✅ Tests triggered on GitHub Actions');
-      appendLine('🔗 View live run: ' + (data.run_url || '—'));
-      appendLine('⏳ Waiting for results… (usually 5-10 mins)\n');
+      appendLine('Tests triggered on GitHub Actions');
+      appendLine('View live run: ' + (data.run_url || '—'));
+      appendLine('Waiting for results… (usually 5-10 mins)\n');
       atPollRunStatus(data.run_id, appendLine);
     } else {
-      appendLine('⚠ Triggered but could not get run ID. Check GitHub Actions manually.');
+      appendLine('Triggered but could not get run ID. Check GitHub Actions manually.');
     }
   } catch (e) {
-    appendLine('⚠ Connection error: ' + e.message);
+    appendLine('Connection error: ' + e.message);
     toast('Run failed: ' + e.message, 'error');
   } finally {
     btnLoad('at-run-btn', false);
@@ -4689,11 +4688,11 @@ function atPollRunStatus(runId, appendLine) {
 
       if (status === 'completed') {
         if (conclusion === 'success') {
-          appendLine('Status: completed ✅');
+          appendLine('Status: completed');
         } else {
           appendLine('Status: completed (' + conclusion + ')');
         }
-        appendLine('📊 Results uploaded — refreshing dashboard…');
+        appendLine('Results uploaded — refreshing dashboard…');
         await atLoadAll();
         _atPollTimer = null;
       } else {
@@ -4701,7 +4700,7 @@ function atPollRunStatus(runId, appendLine) {
         _atPollTimer = setTimeout(poll, 10000);
       }
     } catch (e) {
-      appendLine('⚠ Status check failed: ' + e.message + ' — will retry');
+      appendLine('Status check failed: ' + e.message + ' — will retry');
       _atPollTimer = setTimeout(poll, 10000);
     }
   }
@@ -4801,7 +4800,7 @@ function atInvFilter() {
       <td style="font-size:11px;color:var(--text3)">${(e.roles||[]).join(', ')||'—'}</td>
       <td><button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 8px"
           data-path="${esc(e.path||'')}"
-          onclick="atTestSingleEndpoint(this.dataset.path)">▶ Test</button></td>
+          onclick="atTestSingleEndpoint(this.dataset.path)">Test</button></td>
     </tr>`;
   }).join('');
 }
@@ -4812,7 +4811,7 @@ async function atTestSingleEndpoint(path) {
   const term = document.getElementById('at-terminal');
   const termWrap = document.getElementById('at-terminal-wrap');
   termWrap.style.display = '';
-  term.textContent = `▶ Running single-endpoint test: ${path}\n`;
+  term.textContent = `Running single-endpoint test: ${path}\n`;
   await atRunSuite('all', path);
 }
 
