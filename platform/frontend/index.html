@@ -168,7 +168,7 @@
       </div>
       <button type="submit" class="primary" id="signin-btn">Sign in</button>
     </form>
-    <div class="switch">Don't have an account? <a id="show-signup">Sign up</a></div>
+    <div class="switch">Don't have an account? <a href="#" data-show-view="signup">Sign up</a></div>
   </div>
 
   <!-- Sign Up -->
@@ -190,11 +190,11 @@
       </div>
       <div class="checkbox-row">
         <input type="checkbox" id="su-terms" required />
-        <label for="su-terms">I agree to the <a href="#" onclick="event.stopPropagation()">Terms and Conditions</a></label>
+        <label for="su-terms">I agree to the <a href="#">Terms and Conditions</a></label>
       </div>
       <button type="submit" class="primary" id="signup-btn">Create Account</button>
     </form>
-    <div class="switch">Already have an account? <a id="show-signin">Sign in</a></div>
+    <div class="switch">Already have an account? <a href="#" data-show-view="signin">Sign in</a></div>
   </div>
 </div>
 
@@ -202,110 +202,112 @@
   // Public Supabase project URL + anon key. The anon key is safe to ship in
   // client code — access is enforced by the RLS policies in
   // platform/supabase/schema.sql, not by keeping this key secret.
-  const SUPABASE_URL = 'https://xkgyxyynchrayuitizrg.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { createClient } = supabase
+  const _supabase = createClient(
+    'https://xkgyxyynchrayuitizrg.supabase.co',
+    'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7'
+  )
 
-  const ONBOARDING_URL = 'onboarding.html';
+  const ONBOARDING_URL = 'onboarding.html'
 
   function showView(view) {
-    document.getElementById('signin-view').classList.toggle('hidden', view !== 'signin');
-    document.getElementById('signup-view').classList.toggle('hidden', view !== 'signup');
-    hideMsg();
+    document.getElementById('signin-view').classList.toggle('hidden', view !== 'signin')
+    document.getElementById('signup-view').classList.toggle('hidden', view !== 'signup')
+    hideMsg()
   }
 
   function showMsg(text, type) {
-    const box = document.getElementById('msg-box');
-    box.textContent = text;
-    box.className = 'msg ' + type;
+    const box = document.getElementById('msg-box')
+    box.textContent = text
+    box.className = 'msg ' + type
   }
+
   function hideMsg() {
-    const box = document.getElementById('msg-box');
-    box.className = 'msg';
-    box.textContent = '';
+    const box = document.getElementById('msg-box')
+    box.className = 'msg'
+    box.textContent = ''
   }
 
   function setBusy(btnId, busy, label) {
-    const btn = document.getElementById(btnId);
-    btn.disabled = busy;
-    btn.textContent = busy ? label : (btnId === 'signin-btn' ? 'Sign in' : 'Create Account');
-  }
-
-  async function handleSignUp() {
-    hideMsg();
-    const full_name = document.getElementById('su-name').value.trim();
-    const email = document.getElementById('su-email').value.trim();
-    const password = document.getElementById('su-password').value;
-    const agreed = document.getElementById('su-terms').checked;
-
-    if (!full_name || !email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
-    if (!agreed) { showMsg('Please agree to the Terms and Conditions to continue.', 'error'); return; }
-    if (password.length < 8) { showMsg('Password must be at least 8 characters.', 'error'); return; }
-
-    setBusy('signup-btn', true, 'Creating account…');
-    const { data, error } = await supabase.auth.signUp({
-      email, password,
-      options: { data: { full_name } },
-    });
-    setBusy('signup-btn', false);
-
-    if (error) { showMsg(error.message, 'error'); return; }
-
-    if (data.session) {
-      window.location.href = ONBOARDING_URL;
-    } else {
-      showMsg('Account created — check your email to confirm it, then sign in.', 'info');
-      showView('signin');
-    }
+    const btn = document.getElementById(btnId)
+    btn.disabled = busy
+    btn.textContent = busy ? label : (btnId === 'signin-btn' ? 'Sign in' : 'Create Account')
   }
 
   async function handleSignIn() {
-    hideMsg();
-    const email = document.getElementById('si-email').value.trim();
-    const password = document.getElementById('si-password').value;
-    if (!email || !password) { showMsg('Please enter your email and password.', 'error'); return; }
+    hideMsg()
+    const email = document.getElementById('si-email').value.trim()
+    const password = document.getElementById('si-password').value
+    if (!email || !password) { showMsg('Please enter your email and password.', 'error'); return }
 
-    setBusy('signin-btn', true, 'Signing in…');
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    setBusy('signin-btn', true, 'Signing in…')
+    const { data, error } = await _supabase.auth.signInWithPassword({ email, password })
     if (error) {
-      setBusy('signin-btn', false);
-      showMsg(error.message, 'error');
-      return;
+      setBusy('signin-btn', false)
+      showMsg(error.message, 'error')
+      return
     }
 
-    const { data: profile, error: profileErr } = await supabase
+    const { data: profile, error: profileErr } = await _supabase
       .from('profiles')
       .select('hf_space_url')
       .eq('id', data.user.id)
-      .single();
-    setBusy('signin-btn', false);
+      .single()
+    setBusy('signin-btn', false)
 
     if (!profileErr && profile && profile.hf_space_url) {
-      window.location.href = profile.hf_space_url;
+      window.location.href = profile.hf_space_url
     } else {
-      window.location.href = ONBOARDING_URL;
+      window.location.href = ONBOARDING_URL
     }
   }
 
+  async function handleSignUp() {
+    hideMsg()
+    const full_name = document.getElementById('su-name').value.trim()
+    const email = document.getElementById('su-email').value.trim()
+    const password = document.getElementById('su-password').value
+    const agreed = document.getElementById('su-terms').checked
+
+    if (!full_name || !email || !password) { showMsg('Please fill in all fields.', 'error'); return }
+    if (!agreed) { showMsg('Please agree to the Terms and Conditions to continue.', 'error'); return }
+    if (password.length < 8) { showMsg('Password must be at least 8 characters.', 'error'); return }
+
+    setBusy('signup-btn', true, 'Creating account…')
+    const { data, error } = await _supabase.auth.signUp({
+      email, password,
+      options: { data: { full_name } },
+    })
+    setBusy('signup-btn', false)
+
+    if (error) { showMsg(error.message, 'error'); return }
+
+    showMsg('Check your email to confirm your account.', 'info')
+  }
+
   // If already signed in, skip straight past the login form.
-  (async function redirectIfSignedIn() {
-    const { data } = await supabase.auth.getSession();
+  ;(async function redirectIfSignedIn() {
+    const { data } = await _supabase.auth.getSession()
     if (data.session) {
-      const { data: profile } = await supabase
+      const { data: profile } = await _supabase
         .from('profiles')
         .select('hf_space_url')
         .eq('id', data.session.user.id)
-        .single();
-      window.location.href = (profile && profile.hf_space_url) ? profile.hf_space_url : ONBOARDING_URL;
+        .single()
+      window.location.href = (profile && profile.hf_space_url) ? profile.hf_space_url : ONBOARDING_URL
     }
-  })();
+  })()
 
   document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('signin-btn').addEventListener('click', handleSignIn);
-    document.getElementById('signup-btn').addEventListener('click', handleSignUp);
-    document.getElementById('show-signup').addEventListener('click', () => showView('signup'));
-    document.getElementById('show-signin').addEventListener('click', () => showView('signin'));
-  });
+    document.getElementById('signin-btn')?.addEventListener('click', handleSignIn)
+    document.getElementById('signup-btn')?.addEventListener('click', handleSignUp)
+    document.querySelectorAll('[data-show-view]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault()
+        showView(el.dataset.showView)
+      })
+    })
+  })
 </script>
 </body>
 </html>
