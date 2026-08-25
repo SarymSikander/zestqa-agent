@@ -141,37 +141,16 @@
       background: rgba(126,86,239,0.08); border: 1px solid rgba(126,86,239,0.25);
       border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #cfc1fb; line-height: 1.6; margin-bottom: 26px;
     }
-    .hf-steps { counter-reset: hfstep; margin-bottom: 28px; }
-    .hf-step { display: flex; gap: 14px; margin-bottom: 20px; }
-    .hf-step-num {
-      counter-increment: hfstep; flex-shrink: 0;
-      width: 26px; height: 26px; border-radius: 50%; background: var(--panel); border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent);
-    }
-    .hf-step-num::before { content: counter(hfstep); }
-    .hf-step-body { flex: 1; font-size: 13.5px; color: var(--text2); line-height: 1.7; }
-    .hf-step-body strong { color: var(--text); }
     .codebox {
       background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
       padding: 10px 13px; font-size: 12.5px; color: #c9c9c9; margin-top: 8px; overflow-x: auto; white-space: pre;
     }
-    /* Secret groups (grouped, collapsible secrets UI) */
+    /* Secret groups (required-secrets panel) */
     .secret-groups { margin: 22px 0 30px; display: flex; flex-direction: column; gap: 10px; }
     .secret-group {
       background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
     }
-    .secret-group-header {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      background: transparent; border: none; cursor: pointer; padding: 15px 18px;
-      font-family: inherit; text-align: left;
-    }
-    .secret-group-header .sg-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
-    .secret-group-header .sg-count { font-size: 11.5px; color: var(--text3); margin-left: 8px; font-weight: 500; }
-    .sg-chevron { color: var(--text3); font-size: 13px; transition: transform .15s; flex-shrink: 0; }
-    .secret-group.expanded .sg-chevron { transform: rotate(180deg); }
-    .secret-group-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
-    .secret-group.expanded .secret-group-body { display: block; padding-top: 4px; }
-    .secret-group-note { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin: 12px 0 12px; }
+    .secret-group-body { padding: 18px; }
 
     .secret-item {
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -193,7 +172,6 @@
     .secret-save-hint { font-size: 11.5px; color: var(--text3); margin-top: 6px; min-height: 14px; }
     .secret-save-hint.ok { color: var(--success); }
     .secret-save-hint.fail { color: var(--error); }
-    .secret-list-plain { font-size: 12px; color: var(--text2); line-height: 2; }
 
     .connect-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 22px; max-width: 520px; }
     .connect-row .field { flex: 1; margin-bottom: 0; }
@@ -399,44 +377,12 @@
 
   <!-- ── Step 3: HuggingFace setup ───────────────────────────────── -->
   <div class="view" id="view-3">
-    <h1>Connect your HuggingFace Space</h1>
-    <p class="lead">Your agent runs on YOUR HuggingFace Space — your data never touches our servers.</p>
-
-    <div class="hf-note">
-      ZestQA only stores your theme, project name, and which integrations you've
-      turned on. Credentials, test data, and everything your agent does at
-      runtime stay on the Space you control.
-    </div>
-
-    <div class="hf-steps">
-      <div class="hf-step">
-        <div class="hf-step-num"></div>
-        <div class="hf-step-body">
-          Create a free account at <strong>huggingface.co</strong> if you don't have one already.
-        </div>
-      </div>
-      <div class="hf-step">
-        <div class="hf-step-num"></div>
-        <div class="hf-step-body">
-          Click <strong>New Space</strong> → choose the <strong>Docker</strong> SDK → name it anything you like.
-        </div>
-      </div>
-      <div class="hf-step">
-        <div class="hf-step-num"></div>
-        <div class="hf-step-body">
-          In your Space's <strong>Settings → Variables and secrets</strong>, add the secrets below.
-        </div>
-      </div>
-    </div>
+    <h1>One last thing — set up your HuggingFace Space</h1>
+    <p class="lead">Your agent runs on YOUR Space. We only need 4 secrets to get started.</p>
+    <p class="tc-note" style="margin-top: -18px; margin-bottom: 28px; max-width: 620px;">You can connect Jira, Slack, GitHub and more later — right inside your dashboard, where you'll see exactly why each one is needed.</p>
 
     <div class="secret-groups">
-
-      <!-- Required to launch -->
-      <div class="secret-group expanded" data-group="required">
-        <button class="secret-group-header" type="button" aria-expanded="true">
-          <span><span class="sg-title">Required to launch</span><span class="sg-count">4 secrets</span></span>
-          <span class="sg-chevron">⌄</span>
-        </button>
+      <div class="secret-group">
         <div class="secret-group-body">
           <div class="secret-item">
             <div class="secret-item-main">
@@ -487,95 +433,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Jira -->
-      <div class="secret-group" data-group="jira">
-        <button class="secret-group-header" type="button" aria-expanded="false">
-          <span><span class="sg-title">To use Jira features</span><span class="sg-count">3 secrets</span></span>
-          <span class="sg-chevron">⌄</span>
-        </button>
-        <div class="secret-group-body">
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">JIRA_BASE_URL</div>
-              <div class="secret-desc">Your Atlassian domain, e.g. yourcompany.atlassian.net</div>
-            </div>
-          </div>
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">JIRA_EMAIL</div>
-              <div class="secret-desc">Email you use to log into Jira</div>
-            </div>
-          </div>
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">JIRA_API_TOKEN</div>
-              <div class="secret-desc">Generate at id.atlassian.com/manage-profile/security/api-tokens</div>
-            </div>
-            <div class="secret-item-action">
-              <a class="secret-link" href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener noreferrer">Generate →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slack -->
-      <div class="secret-group" data-group="slack">
-        <button class="secret-group-header" type="button" aria-expanded="false">
-          <span><span class="sg-title">To get Slack reports</span><span class="sg-count">1 secret</span></span>
-          <span class="sg-chevron">⌄</span>
-        </button>
-        <div class="secret-group-body">
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">SLACK_WEBHOOK_URL</div>
-              <div class="secret-desc">Get at api.slack.com/apps → Incoming Webhooks</div>
-            </div>
-            <div class="secret-item-action">
-              <a class="secret-link" href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer">Open →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI test generation -->
-      <div class="secret-group" data-group="ai">
-        <button class="secret-group-header" type="button" aria-expanded="false">
-          <span><span class="sg-title">For AI test generation</span><span class="sg-count">1 secret</span></span>
-          <span class="sg-chevron">⌄</span>
-        </button>
-        <div class="secret-group-body">
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">GITHUB_TOKEN</div>
-              <div class="secret-desc">Generate at github.com/settings/tokens</div>
-            </div>
-            <div class="secret-item-action">
-              <a class="secret-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">Generate →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Optional -->
-      <div class="secret-group" data-group="optional">
-        <button class="secret-group-header" type="button" aria-expanded="false">
-          <span><span class="sg-title">Optional — portal credentials &amp; DB</span></span>
-          <span class="sg-chevron">⌄</span>
-        </button>
-        <div class="secret-group-body">
-          <p class="secret-group-note">Add these later to enable portal login testing and live DB queries.</p>
-          <div class="secret-list-plain mono">
-            LOCAL_URL, STAGING_API_URL, PRODUCTION_API_URL<br />
-            SELLER/ADMIN/AGENCY_STAGING_EMAIL / _PASSWORD<br />
-            SELLER/ADMIN/AGENCY_PRODUCTION_EMAIL / _PASSWORD<br />
-            PRODUCTION_DB_HOST / _PORT / _USER / _PASSWORD / _NAME<br />
-            GITHUB_FRONTEND_REPO / GITHUB_BACKEND_REPO<br />
-            SUPABASE_URL / SUPABASE_ANON_KEY
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <div class="section-title" style="margin-top: 0;">Push your agent code</div>
@@ -790,14 +647,6 @@
     document.getElementById('tc-overlay').classList.remove('active');
   }
 
-  // ── Secret groups (collapsible) ──────────────────────────────────
-  function toggleSecretGroup(header) {
-    const group = header.closest('.secret-group');
-    const expanded = header.getAttribute('aria-expanded') === 'true';
-    header.setAttribute('aria-expanded', String(!expanded));
-    group.classList.toggle('expanded', !expanded);
-  }
-
   // ── Clipboard helper with a graceful fallback ────────────────────
   async function copyToClipboard(text, btn) {
     const original = btn ? btn.textContent : null;
@@ -1008,11 +857,6 @@
     document.getElementById('tc-agree')?.addEventListener('click', closeTermsModal);
     document.getElementById('tc-overlay')?.addEventListener('click', (e) => {
       if (e.target.id === 'tc-overlay') closeTermsModal();
-    });
-
-    // Secret groups
-    document.querySelectorAll('.secret-group-header').forEach(header => {
-      header.addEventListener('click', () => toggleSecretGroup(header));
     });
 
     // SESSION_SECRET
