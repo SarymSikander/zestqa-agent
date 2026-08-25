@@ -1,6 +1,6 @@
 ---
 title: ZestQA Platform API
-emoji: Z
+emoji: 🧪
 colorFrom: purple
 colorTo: blue
 sdk: gradio
