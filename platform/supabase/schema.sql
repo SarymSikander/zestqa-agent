@@ -8,14 +8,16 @@ CREATE TABLE public.profiles (
   hf_space_url TEXT,        -- their HuggingFace Space URL
   staging_url TEXT,         -- their product's staging portal URL
   production_url TEXT,      -- their product's production portal URL
+  dashboard_url TEXT,       -- their provisioned Vercel dashboard URL
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Migration for existing databases: run this in the Supabase SQL editor if
--- public.profiles was created before staging_url/production_url existed.
+-- public.profiles was created before these columns existed.
 -- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS staging_url TEXT;
 -- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS production_url TEXT;
+-- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS dashboard_url TEXT;
 
 -- User themes/appearance
 CREATE TABLE public.themes (
