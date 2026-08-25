@@ -679,15 +679,11 @@
     'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7',
     {
       auth: {
-        persistSession: false,
-        storage: undefined
+        persistSession: true,
+        storage: window.sessionStorage
       }
     }
   );
-
-  // Clear any session persisted by earlier versions of this page.
-  localStorage.removeItem('sb-xkgyxyynchrayuitizrg-auth-token');
-  sessionStorage.clear();
 
   // Central ZestQA platform API — same origin as this page when platform/api
   // is deployed alongside platform/frontend. Point this at the platform API's

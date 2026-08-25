@@ -208,15 +208,11 @@
     'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7',
     {
       auth: {
-        persistSession: false,
-        storage: undefined
+        persistSession: true,
+        storage: window.sessionStorage
       }
     }
   )
-
-  // Clear any session persisted by earlier versions of this page.
-  localStorage.removeItem('sb-xkgyxyynchrayuitizrg-auth-token')
-  sessionStorage.clear()
 
   const ONBOARDING_URL = 'onboarding.html'
 
