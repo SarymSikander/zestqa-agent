@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
   <style>
     :root {
       --bg:       #0a0a0a;
@@ -154,11 +155,45 @@
       background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
       padding: 10px 13px; font-size: 12.5px; color: #c9c9c9; margin-top: 8px; overflow-x: auto; white-space: pre;
     }
-    .secrets-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
-    .secrets-table th { text-align: left; color: var(--text3); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--border); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.04em; }
-    .secrets-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
-    .secrets-table td:first-child { color: var(--accent); white-space: nowrap; }
-    .secrets-table tr:last-child td { border-bottom: none; }
+    /* Secret groups (grouped, collapsible secrets UI) */
+    .secret-groups { margin: 22px 0 30px; display: flex; flex-direction: column; gap: 10px; }
+    .secret-group {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .secret-group-header {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      background: transparent; border: none; cursor: pointer; padding: 15px 18px;
+      font-family: inherit; text-align: left;
+    }
+    .secret-group-header .sg-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .secret-group-header .sg-count { font-size: 11.5px; color: var(--text3); margin-left: 8px; font-weight: 500; }
+    .sg-chevron { color: var(--text3); font-size: 13px; transition: transform .15s; flex-shrink: 0; }
+    .secret-group.expanded .sg-chevron { transform: rotate(180deg); }
+    .secret-group-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
+    .secret-group.expanded .secret-group-body { display: block; padding-top: 4px; }
+    .secret-group-note { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin: 12px 0 12px; }
+
+    .secret-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 13px 0; border-bottom: 1px solid var(--border);
+    }
+    .secret-item:last-child { border-bottom: none; }
+    .secret-item-main { min-width: 0; }
+    .secret-name {
+      display: inline-block; font-size: 12.5px; color: var(--accent);
+      background: rgba(126,86,239,0.1); border-radius: 5px; padding: 2px 7px; margin-bottom: 5px;
+    }
+    .secret-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+    .secret-item-action { flex-shrink: 0; }
+    .secret-link { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .secret-link:hover { text-decoration: underline; }
+    .secret-item-stacked { flex-direction: column; align-items: stretch; gap: 12px; }
+    .secret-item-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .secret-item-inputs .field { margin-bottom: 0; }
+    .secret-save-hint { font-size: 11.5px; color: var(--text3); margin-top: 6px; min-height: 14px; }
+    .secret-save-hint.ok { color: var(--success); }
+    .secret-save-hint.fail { color: var(--error); }
+    .secret-list-plain { font-size: 12px; color: var(--text2); line-height: 2; }
 
     .connect-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 22px; max-width: 520px; }
     .connect-row .field { flex: 1; margin-bottom: 0; }
@@ -217,6 +252,8 @@
       padding: 16px 24px; border-top: 1px solid var(--border);
       display: flex; justify-content: flex-end;
     }
+    .modal-body .field { margin-bottom: 16px; }
+    .modal-body .field:last-of-type { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -388,37 +425,166 @@
         <div class="hf-step-num"></div>
         <div class="hf-step-body">
           In your Space's <strong>Settings → Variables and secrets</strong>, add the secrets below.
-          <table class="secrets-table">
-            <thead><tr><th>Secret</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>SESSION_SECRET</td><td>Random string used to sign dashboard login sessions</td></tr>
-              <tr><td>SQA_USERS</td><td>JSON list of dashboard login accounts (email + bcrypt password hash)</td></tr>
-              <tr><td>STAGING_URL / PRODUCTION_URL / LOCAL_URL</td><td>Your product's portal URLs per environment</td></tr>
-              <tr><td>STAGING_API_URL / PRODUCTION_API_URL</td><td>Your backend API URLs per environment</td></tr>
-              <tr><td>SELLER/ADMIN/AGENCY_STAGING_EMAIL / _PASSWORD</td><td>Staging portal login credentials per role</td></tr>
-              <tr><td>SELLER/ADMIN/AGENCY_PRODUCTION_EMAIL / _PASSWORD</td><td>Production portal login credentials per role</td></tr>
-              <tr><td>JIRA_BASE_URL / JIRA_EMAIL / JIRA_API_TOKEN</td><td>Jira integration for ticket automation</td></tr>
-              <tr><td>GROQ_API_KEY</td><td>AI model access (test generation, chat assistant)</td></tr>
-              <tr><td>GITHUB_TOKEN</td><td>Azure GPT-4o fallback + repo access for branch tools</td></tr>
-              <tr><td>SLACK_WEBHOOK_URL</td><td>Posts run reports to a Slack channel</td></tr>
-              <tr><td>PRODUCTION_DB_HOST / _PORT / _USER / _PASSWORD / _NAME</td><td>Optional read-only DB access for health checks</td></tr>
-              <tr><td>GITHUB_FRONTEND_REPO / GITHUB_BACKEND_REPO</td><td>Repo paths for branch management tools</td></tr>
-              <tr><td>SUPABASE_URL / SUPABASE_ANON_KEY</td><td>Lets your dashboard load your ZestQA theme and confirm your session</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="hf-step">
-        <div class="hf-step-num"></div>
-        <div class="hf-step-body">
-          Push the agent code to your Space:
-          <div class="codebox mono">git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME
-git push space main</div>
         </div>
       </div>
     </div>
 
-    <div class="section-title" style="margin-top: 0;">Your HuggingFace Space URL</div>
+    <div class="secret-groups">
+
+      <!-- Required to launch -->
+      <div class="secret-group expanded" data-group="required">
+        <button class="secret-group-header" type="button" aria-expanded="true">
+          <span><span class="sg-title">Required to launch</span><span class="sg-count">4 secrets</span></span>
+          <span class="sg-chevron">⌄</span>
+        </button>
+        <div class="secret-group-body">
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">SESSION_SECRET</div>
+              <div class="secret-desc">Signs your dashboard login sessions securely</div>
+            </div>
+            <div class="secret-item-action">
+              <button class="btn-secondary" id="gen-session-secret-btn">Generate</button>
+            </div>
+          </div>
+
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">SQA_USERS</div>
+              <div class="secret-desc">Your dashboard login credentials (email + hashed password)</div>
+            </div>
+            <div class="secret-item-action">
+              <button class="btn-secondary" id="sqa-users-help-btn">Help me create this</button>
+            </div>
+          </div>
+
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">GROQ_API_KEY</div>
+              <div class="secret-desc">Free AI model access for test generation and chat</div>
+            </div>
+            <div class="secret-item-action">
+              <a class="secret-link" href="https://console.groq.com" target="_blank" rel="noopener noreferrer">Get free key →</a>
+            </div>
+          </div>
+
+          <div class="secret-item secret-item-stacked">
+            <div class="secret-item-main">
+              <div class="secret-name mono">STAGING_URL + PRODUCTION_URL</div>
+              <div class="secret-desc">Your product's portal URLs</div>
+            </div>
+            <div class="secret-item-inputs">
+              <div class="field">
+                <label for="staging-url">Staging URL</label>
+                <input type="text" id="staging-url" placeholder="https://staging.yourapp.com" />
+              </div>
+              <div class="field">
+                <label for="production-url">Production URL</label>
+                <input type="text" id="production-url" placeholder="https://yourapp.com" />
+              </div>
+            </div>
+            <div class="secret-save-hint" id="portal-urls-hint"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jira -->
+      <div class="secret-group" data-group="jira">
+        <button class="secret-group-header" type="button" aria-expanded="false">
+          <span><span class="sg-title">To use Jira features</span><span class="sg-count">3 secrets</span></span>
+          <span class="sg-chevron">⌄</span>
+        </button>
+        <div class="secret-group-body">
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">JIRA_BASE_URL</div>
+              <div class="secret-desc">Your Atlassian domain, e.g. yourcompany.atlassian.net</div>
+            </div>
+          </div>
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">JIRA_EMAIL</div>
+              <div class="secret-desc">Email you use to log into Jira</div>
+            </div>
+          </div>
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">JIRA_API_TOKEN</div>
+              <div class="secret-desc">Generate at id.atlassian.com/manage-profile/security/api-tokens</div>
+            </div>
+            <div class="secret-item-action">
+              <a class="secret-link" href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener noreferrer">Generate →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slack -->
+      <div class="secret-group" data-group="slack">
+        <button class="secret-group-header" type="button" aria-expanded="false">
+          <span><span class="sg-title">To get Slack reports</span><span class="sg-count">1 secret</span></span>
+          <span class="sg-chevron">⌄</span>
+        </button>
+        <div class="secret-group-body">
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">SLACK_WEBHOOK_URL</div>
+              <div class="secret-desc">Get at api.slack.com/apps → Incoming Webhooks</div>
+            </div>
+            <div class="secret-item-action">
+              <a class="secret-link" href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer">Open →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI test generation -->
+      <div class="secret-group" data-group="ai">
+        <button class="secret-group-header" type="button" aria-expanded="false">
+          <span><span class="sg-title">For AI test generation</span><span class="sg-count">1 secret</span></span>
+          <span class="sg-chevron">⌄</span>
+        </button>
+        <div class="secret-group-body">
+          <div class="secret-item">
+            <div class="secret-item-main">
+              <div class="secret-name mono">GITHUB_TOKEN</div>
+              <div class="secret-desc">Generate at github.com/settings/tokens</div>
+            </div>
+            <div class="secret-item-action">
+              <a class="secret-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">Generate →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional -->
+      <div class="secret-group" data-group="optional">
+        <button class="secret-group-header" type="button" aria-expanded="false">
+          <span><span class="sg-title">Optional — portal credentials &amp; DB</span></span>
+          <span class="sg-chevron">⌄</span>
+        </button>
+        <div class="secret-group-body">
+          <p class="secret-group-note">Add these later to enable portal login testing and live DB queries.</p>
+          <div class="secret-list-plain mono">
+            LOCAL_URL, STAGING_API_URL, PRODUCTION_API_URL<br />
+            SELLER/ADMIN/AGENCY_STAGING_EMAIL / _PASSWORD<br />
+            SELLER/ADMIN/AGENCY_PRODUCTION_EMAIL / _PASSWORD<br />
+            PRODUCTION_DB_HOST / _PORT / _USER / _PASSWORD / _NAME<br />
+            GITHUB_FRONTEND_REPO / GITHUB_BACKEND_REPO<br />
+            SUPABASE_URL / SUPABASE_ANON_KEY
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title" style="margin-top: 0;">Push your agent code</div>
+    <div class="codebox mono">git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME && git push space main</div>
+    <div class="actions" style="justify-content: flex-start; margin-top: 12px; max-width: none;">
+      <button class="btn-secondary" id="copy-push-cmd-btn">Copy push command</button>
+    </div>
+
+    <div class="section-title">Your HuggingFace Space URL</div>
     <div class="connect-row">
       <div class="field">
         <input type="text" id="hf-url" placeholder="https://your-username-your-space.hf.space" />
@@ -475,12 +641,53 @@ git push space main</div>
   </div>
 </div>
 
+<!-- ── SQA_USERS helper modal ──────────────────────────────────────── -->
+<div class="modal-overlay" id="sqa-users-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Create your SQA_USERS value</h2>
+      <button class="modal-close" id="sqa-users-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="sqa-users-email">Email</label>
+        <input type="text" id="sqa-users-email" placeholder="you@company.com" />
+      </div>
+      <div class="field">
+        <label for="sqa-users-password">Password</label>
+        <input type="text" id="sqa-users-password" placeholder="Choose a login password" />
+      </div>
+      <div class="actions" style="justify-content: flex-start; margin-top: 4px; max-width: none;">
+        <button class="btn-secondary" id="sqa-users-generate-btn">Generate SQA_USERS value</button>
+      </div>
+      <div class="field" id="sqa-users-output-field" style="display:none; margin-top: 20px;">
+        <label>SQA_USERS value</label>
+        <div class="codebox mono" id="sqa-users-output" style="white-space: pre-wrap; word-break: break-all;"></div>
+        <div class="actions" style="justify-content: flex-start; margin-top: 10px; max-width: none;">
+          <button class="btn-secondary" id="sqa-users-copy-btn">Copy</button>
+        </div>
+        <div class="hf-note" style="margin-top: 14px; margin-bottom: 0;">Paste this as the SQA_USERS secret value in HuggingFace.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const { createClient } = supabase;
   const _supabase = createClient(
     'https://xkgyxyynchrayuitizrg.supabase.co',
-    'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7'
+    'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7',
+    {
+      auth: {
+        persistSession: false,
+        storage: undefined
+      }
+    }
   );
+
+  // Clear any session persisted by earlier versions of this page.
+  localStorage.removeItem('sb-xkgyxyynchrayuitizrg-auth-token');
+  sessionStorage.clear();
 
   // Central ZestQA platform API — same origin as this page when platform/api
   // is deployed alongside platform/frontend. Point this at the platform API's
@@ -587,6 +794,96 @@ git push space main</div>
     document.getElementById('tc-overlay').classList.remove('active');
   }
 
+  // ── Secret groups (collapsible) ──────────────────────────────────
+  function toggleSecretGroup(header) {
+    const group = header.closest('.secret-group');
+    const expanded = header.getAttribute('aria-expanded') === 'true';
+    header.setAttribute('aria-expanded', String(!expanded));
+    group.classList.toggle('expanded', !expanded);
+  }
+
+  // ── Clipboard helper with a graceful fallback ────────────────────
+  async function copyToClipboard(text, btn) {
+    const original = btn ? btn.textContent : null;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      window.prompt('Copy this value:', text);
+      return;
+    }
+    if (btn) {
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    }
+  }
+
+  // ── SESSION_SECRET generator ─────────────────────────────────────
+  function generateSessionSecret() {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function handleGenerateSessionSecret() {
+    const secret = generateSessionSecret();
+    copyToClipboard(secret, document.getElementById('gen-session-secret-btn'));
+  }
+
+  // ── SQA_USERS helper modal ───────────────────────────────────────
+  function openSqaUsersModal() {
+    document.getElementById('sqa-users-overlay').classList.add('active');
+  }
+
+  function closeSqaUsersModal() {
+    document.getElementById('sqa-users-overlay').classList.remove('active');
+  }
+
+  function handleGenerateSqaUsers() {
+    const email = document.getElementById('sqa-users-email').value.trim();
+    const password = document.getElementById('sqa-users-password').value;
+    if (!email || !password) {
+      alert('Enter both an email and a password first.');
+      return;
+    }
+    const hash = dcodeIO.bcrypt.hashSync(password, 10);
+    const value = JSON.stringify([{ email, password: hash }]);
+    document.getElementById('sqa-users-output').textContent = value;
+    document.getElementById('sqa-users-output-field').style.display = '';
+  }
+
+  function handleCopySqaUsers() {
+    const value = document.getElementById('sqa-users-output').textContent;
+    if (!value) return;
+    copyToClipboard(value, document.getElementById('sqa-users-copy-btn'));
+  }
+
+  // ── Push command ──────────────────────────────────────────────────
+  function handleCopyPushCommand() {
+    const cmd = 'git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME && git push space main';
+    copyToClipboard(cmd, document.getElementById('copy-push-cmd-btn'));
+  }
+
+  // ── Portal URLs (STAGING_URL / PRODUCTION_URL) — saved to profile ──
+  async function savePortalUrls() {
+    const hint = document.getElementById('portal-urls-hint');
+    const staging_url = document.getElementById('staging-url').value.trim() || null;
+    const production_url = document.getElementById('production-url').value.trim() || null;
+
+    const { error } = await _supabase
+      .from('profiles')
+      .update({ staging_url, production_url })
+      .eq('id', currentUser.id);
+
+    if (error) {
+      hint.className = 'secret-save-hint fail';
+      hint.textContent = 'Could not save — ' + error.message;
+      return;
+    }
+    hint.className = 'secret-save-hint ok';
+    hint.textContent = 'Saved';
+    setTimeout(() => { hint.textContent = ''; hint.className = 'secret-save-hint'; }, 2000);
+  }
+
   function resetConnStatus() {
     hfVerified = false;
     document.getElementById('launch-btn').disabled = true;
@@ -664,6 +961,16 @@ git push space main</div>
     }
     currentUser = session.user;
 
+    const { data: profile } = await _supabase
+      .from('profiles')
+      .select('staging_url, production_url')
+      .eq('id', currentUser.id)
+      .single();
+    if (profile) {
+      if (profile.staging_url) document.getElementById('staging-url').value = profile.staging_url;
+      if (profile.production_url) document.getElementById('production-url').value = profile.production_url;
+    }
+
     const { data: theme } = await _supabase.from('themes').select('*').eq('user_id', currentUser.id).single();
     if (theme) {
       if (theme.project_name) document.getElementById('project-name').value = theme.project_name;
@@ -706,6 +1013,30 @@ git push space main</div>
     document.getElementById('tc-overlay')?.addEventListener('click', (e) => {
       if (e.target.id === 'tc-overlay') closeTermsModal();
     });
+
+    // Secret groups
+    document.querySelectorAll('.secret-group-header').forEach(header => {
+      header.addEventListener('click', () => toggleSecretGroup(header));
+    });
+
+    // SESSION_SECRET
+    document.getElementById('gen-session-secret-btn')?.addEventListener('click', handleGenerateSessionSecret);
+
+    // SQA_USERS modal
+    document.getElementById('sqa-users-help-btn')?.addEventListener('click', openSqaUsersModal);
+    document.getElementById('sqa-users-close')?.addEventListener('click', closeSqaUsersModal);
+    document.getElementById('sqa-users-generate-btn')?.addEventListener('click', handleGenerateSqaUsers);
+    document.getElementById('sqa-users-copy-btn')?.addEventListener('click', handleCopySqaUsers);
+    document.getElementById('sqa-users-overlay')?.addEventListener('click', (e) => {
+      if (e.target.id === 'sqa-users-overlay') closeSqaUsersModal();
+    });
+
+    // Portal URLs
+    document.getElementById('staging-url')?.addEventListener('blur', savePortalUrls);
+    document.getElementById('production-url')?.addEventListener('blur', savePortalUrls);
+
+    // Push command
+    document.getElementById('copy-push-cmd-btn')?.addEventListener('click', handleCopyPushCommand);
   });
 </script>
 </body>

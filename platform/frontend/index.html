@@ -205,8 +205,18 @@
   const { createClient } = supabase
   const _supabase = createClient(
     'https://xkgyxyynchrayuitizrg.supabase.co',
-    'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7'
+    'sb_publishable_wotBUi6dXllhNiwAdiriTA_Y8x1pRf7',
+    {
+      auth: {
+        persistSession: false,
+        storage: undefined
+      }
+    }
   )
+
+  // Clear any session persisted by earlier versions of this page.
+  localStorage.removeItem('sb-xkgyxyynchrayuitizrg-auth-token')
+  sessionStorage.clear()
 
   const ONBOARDING_URL = 'onboarding.html'
 

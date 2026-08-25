@@ -6,9 +6,16 @@ CREATE TABLE public.profiles (
   company TEXT,
   role TEXT DEFAULT 'user', -- 'user' or 'admin'
   hf_space_url TEXT,        -- their HuggingFace Space URL
+  staging_url TEXT,         -- their product's staging portal URL
+  production_url TEXT,      -- their product's production portal URL
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migration for existing databases: run this in the Supabase SQL editor if
+-- public.profiles was created before staging_url/production_url existed.
+-- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS staging_url TEXT;
+-- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS production_url TEXT;
 
 -- User themes/appearance
 CREATE TABLE public.themes (
