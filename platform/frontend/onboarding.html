@@ -656,10 +656,13 @@ git push space main</div>
     window.location.href = url;
   }
 
-  (async function init() {
-    const { data } = await _supabase.auth.getSession();
-    if (!data.session) { window.location.href = LOGIN_URL; return; }
-    currentUser = data.session.user;
+  document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (!session) {
+      window.location.href = LOGIN_URL;
+      return;
+    }
+    currentUser = session.user;
 
     const { data: theme } = await _supabase.from('themes').select('*').eq('user_id', currentUser.id).single();
     if (theme) {
@@ -680,9 +683,8 @@ git push space main</div>
       }
     }
     updatePreview();
-  })();
 
-  document.addEventListener('DOMContentLoaded', () => {
+    // Wire up all interactive elements now that the DOM is ready and the user is authenticated.
     document.getElementById('get-started-btn')?.addEventListener('click', () => goToStep(2));
     document.getElementById('step2-back-btn')?.addEventListener('click', () => goToStep(1));
     document.getElementById('step2-next')?.addEventListener('click', saveThemeAndContinue);

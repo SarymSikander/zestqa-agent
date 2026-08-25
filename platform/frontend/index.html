@@ -285,20 +285,25 @@
     showMsg('Check your email to confirm your account.', 'info')
   }
 
-  // If already signed in, skip straight past the login form.
-  ;(async function redirectIfSignedIn() {
-    const { data } = await _supabase.auth.getSession()
-    if (data.session) {
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Already signed in — skip the login form entirely.
+    const { data: { session } } = await _supabase.auth.getSession()
+    if (session) {
       const { data: profile } = await _supabase
         .from('profiles')
         .select('hf_space_url')
-        .eq('id', data.session.user.id)
+        .eq('id', session.user.id)
         .single()
-      window.location.href = (profile && profile.hf_space_url) ? profile.hf_space_url : ONBOARDING_URL
-    }
-  })()
 
-  document.addEventListener('DOMContentLoaded', () => {
+      if (profile?.hf_space_url) {
+        window.location.href = profile.hf_space_url
+      } else {
+        window.location.href = ONBOARDING_URL
+      }
+      return
+    }
+
+    // No active session — show the login form and wire it up.
     document.getElementById('signin-btn')?.addEventListener('click', handleSignIn)
     document.getElementById('signup-btn')?.addEventListener('click', handleSignUp)
     document.querySelectorAll('[data-show-view]').forEach(el => {
