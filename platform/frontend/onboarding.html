@@ -145,6 +145,31 @@
       background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
       padding: 10px 13px; font-size: 12.5px; color: #c9c9c9; margin-top: 8px; overflow-x: auto; white-space: pre;
     }
+
+    /* Guided walkthrough (numbered step cards) */
+    .walkthrough { display: flex; flex-direction: column; gap: 16px; margin: 26px 0 20px; }
+    .walk-step {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px 26px;
+    }
+    .walk-step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .walk-step-num {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(126,86,239,0.12); border: 1.5px solid var(--accent);
+      color: var(--accent); font-weight: 800; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .walk-step-icon { font-size: 20px; line-height: 1; flex-shrink: 0; }
+    .walk-step-title { font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .walk-step-content { margin-left: 42px; }
+    .walk-step-body { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+    .walk-instructions { margin: 14px 0 0; padding-left: 20px; font-size: 13px; color: var(--text2); line-height: 2; }
+    .walk-instructions strong { color: var(--text); }
+    .walk-instructions .mono { color: var(--text); }
+    .walk-skip { margin-top: 14px; font-size: 12.5px; color: var(--text3); }
+    .walk-skip a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .walk-skip a:hover { text-decoration: underline; }
+
     /* Secret groups (required-secrets panel) */
     .secret-groups { margin: 22px 0 30px; display: flex; flex-direction: column; gap: 10px; }
     .secret-group {
@@ -377,78 +402,160 @@
 
   <!-- ── Step 3: HuggingFace setup ───────────────────────────────── -->
   <div class="view" id="view-3">
-    <h1>One last thing — set up your HuggingFace Space</h1>
-    <p class="lead">Your agent runs on YOUR Space. We only need 4 secrets to get started.</p>
-    <p class="tc-note" style="margin-top: -18px; margin-bottom: 28px; max-width: 620px;">You can connect Jira, Slack, GitHub and more later — right inside your dashboard, where you'll see exactly why each one is needed.</p>
+    <h1>Set up your agent</h1>
+    <p class="lead">Your ZestQA agent runs on YOUR own infrastructure. We'll walk you through it — takes about 5 minutes.</p>
 
-    <div class="secret-groups">
-      <div class="secret-group">
-        <div class="secret-group-body">
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">SESSION_SECRET</div>
-              <div class="secret-desc">Signs your dashboard login sessions securely</div>
-            </div>
-            <div class="secret-item-action">
-              <button class="btn-secondary" id="gen-session-secret-btn">Generate</button>
-            </div>
+    <div class="walkthrough">
+
+      <!-- Step 1 -->
+      <div class="walk-step">
+        <div class="walk-step-head">
+          <div class="walk-step-num">1</div>
+          <div class="walk-step-icon">🤗</div>
+          <div class="walk-step-title">Create a free HuggingFace account</div>
+        </div>
+        <div class="walk-step-content">
+          <p class="walk-step-body">HuggingFace is where your agent will live and run. It's free and takes 30 seconds to set up.</p>
+          <div class="actions" style="justify-content: flex-start; margin-top: 16px; max-width: none;">
+            <a class="btn-secondary" href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Create account at huggingface.co →</a>
           </div>
+          <div class="walk-skip">Already have one? <a href="#walk-step-2" id="skip-to-step2">Skip to step 2 ↓</a></div>
+        </div>
+      </div>
 
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">SQA_USERS</div>
-              <div class="secret-desc">Your dashboard login credentials (email + hashed password)</div>
-            </div>
-            <div class="secret-item-action">
-              <button class="btn-secondary" id="sqa-users-help-btn">Help me create this</button>
-            </div>
-          </div>
-
-          <div class="secret-item">
-            <div class="secret-item-main">
-              <div class="secret-name mono">GROQ_API_KEY</div>
-              <div class="secret-desc">Free AI model access for test generation and chat</div>
-            </div>
-            <div class="secret-item-action">
-              <a class="secret-link" href="https://console.groq.com" target="_blank" rel="noopener noreferrer">Get free key →</a>
-            </div>
-          </div>
-
-          <div class="secret-item secret-item-stacked">
-            <div class="secret-item-main">
-              <div class="secret-name mono">STAGING_URL + PRODUCTION_URL</div>
-              <div class="secret-desc">Your product's portal URLs</div>
-            </div>
-            <div class="secret-item-inputs">
-              <div class="field">
-                <label for="staging-url">Staging URL</label>
-                <input type="text" id="staging-url" placeholder="https://staging.yourapp.com" />
-              </div>
-              <div class="field">
-                <label for="production-url">Production URL</label>
-                <input type="text" id="production-url" placeholder="https://yourapp.com" />
-              </div>
-            </div>
-            <div class="secret-save-hint" id="portal-urls-hint"></div>
+      <!-- Step 2 -->
+      <div class="walk-step" id="walk-step-2">
+        <div class="walk-step-head">
+          <div class="walk-step-num">2</div>
+          <div class="walk-step-icon">🚀</div>
+          <div class="walk-step-title">Create a new Space</div>
+        </div>
+        <div class="walk-step-content">
+          <p class="walk-step-body">A Space is where your agent code runs. Think of it like a mini server just for your agent.</p>
+          <ol class="walk-instructions">
+            <li>Go to <span class="mono">huggingface.co/new-space</span></li>
+            <li>Choose <strong>Docker</strong> as the Space SDK</li>
+            <li>Name it anything you like (e.g. "my-qa-agent")</li>
+            <li>Set visibility to <strong>Public</strong></li>
+            <li>Click <strong>Create Space</strong></li>
+          </ol>
+          <div class="actions" style="justify-content: flex-start; margin-top: 16px; max-width: none;">
+            <a class="btn-secondary" href="https://huggingface.co/new-space" target="_blank" rel="noopener noreferrer">Open HuggingFace →</a>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="section-title" style="margin-top: 0;">Push your agent code</div>
-    <div class="codebox mono">git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME && git push space main</div>
-    <div class="actions" style="justify-content: flex-start; margin-top: 12px; max-width: none;">
-      <button class="btn-secondary" id="copy-push-cmd-btn">Copy push command</button>
-    </div>
+      <!-- Step 3 -->
+      <div class="walk-step">
+        <div class="walk-step-head">
+          <div class="walk-step-num">3</div>
+          <div class="walk-step-icon">🔑</div>
+          <div class="walk-step-title">Add 4 secrets to your Space</div>
+        </div>
+        <div class="walk-step-content">
+          <p class="walk-step-body">In your Space → Settings → Variables and secrets, add these 4 values. We'll help you generate them.</p>
 
-    <div class="section-title">Your HuggingFace Space URL</div>
-    <div class="connect-row">
-      <div class="field">
-        <input type="text" id="hf-url" placeholder="https://your-username-your-space.hf.space" />
+          <div class="secret-groups" style="margin: 16px 0 0;">
+            <div class="secret-group">
+              <div class="secret-group-body">
+                <div class="secret-item">
+                  <div class="secret-item-main">
+                    <div class="secret-name mono">SESSION_SECRET</div>
+                    <div class="secret-desc">Signs your dashboard login sessions securely</div>
+                  </div>
+                  <div class="secret-item-action">
+                    <button class="btn-secondary" id="gen-session-secret-btn">Generate</button>
+                  </div>
+                </div>
+
+                <div class="secret-item">
+                  <div class="secret-item-main">
+                    <div class="secret-name mono">SQA_USERS</div>
+                    <div class="secret-desc">Your dashboard login credentials (email + hashed password)</div>
+                  </div>
+                  <div class="secret-item-action">
+                    <button class="btn-secondary" id="sqa-users-help-btn">Help me create this</button>
+                  </div>
+                </div>
+
+                <div class="secret-item">
+                  <div class="secret-item-main">
+                    <div class="secret-name mono">GROQ_API_KEY</div>
+                    <div class="secret-desc">Free AI model access for test generation and chat</div>
+                  </div>
+                  <div class="secret-item-action">
+                    <a class="secret-link" href="https://console.groq.com" target="_blank" rel="noopener noreferrer">Get free key →</a>
+                  </div>
+                </div>
+
+                <div class="secret-item secret-item-stacked">
+                  <div class="secret-item-main">
+                    <div class="secret-name mono">STAGING_URL + PRODUCTION_URL</div>
+                    <div class="secret-desc">Your product's portal URLs</div>
+                  </div>
+                  <div class="secret-item-inputs">
+                    <div class="field">
+                      <label for="staging-url">Staging URL</label>
+                      <input type="text" id="staging-url" placeholder="https://staging.yourapp.com" />
+                    </div>
+                    <div class="field">
+                      <label for="production-url">Production URL</label>
+                      <input type="text" id="production-url" placeholder="https://yourapp.com" />
+                    </div>
+                  </div>
+                  <div class="secret-save-hint" id="portal-urls-hint"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <button class="btn-secondary" id="test-conn-btn">Test Connection</button>
+
+      <!-- Step 4 -->
+      <div class="walk-step">
+        <div class="walk-step-head">
+          <div class="walk-step-num">4</div>
+          <div class="walk-step-icon">📦</div>
+          <div class="walk-step-title">Push your agent code to the Space</div>
+        </div>
+        <div class="walk-step-content">
+          <p class="walk-step-body">This sends the ZestQA agent code to your Space. Run this command in your terminal:</p>
+
+          <div class="codebox mono" id="push-cmd-box">git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME
+git push space main</div>
+
+          <div class="color-grid" style="margin-top: 14px;">
+            <div class="field" style="margin-bottom: 0;">
+              <label for="hf-username">Your HuggingFace username</label>
+              <input type="text" id="hf-username" placeholder="e.g. jane-doe" />
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label for="hf-space-name">Your Space name</label>
+              <input type="text" id="hf-space-name" placeholder="e.g. my-qa-agent" />
+            </div>
+          </div>
+
+          <div class="actions" style="justify-content: flex-start; margin-top: 16px; max-width: none;">
+            <button class="btn-secondary" id="copy-push-cmd-btn">Copy command</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final -->
+      <div class="walk-step">
+        <p class="walk-step-body">Once your Space is running (takes 2-3 minutes after push), enter your Space URL below:</p>
+
+        <div class="section-title" style="margin-top: 18px;">Your HuggingFace Space URL</div>
+        <div class="connect-row">
+          <div class="field">
+            <input type="text" id="hf-url" placeholder="https://your-username-your-space-name.hf.space" />
+          </div>
+          <button class="btn-secondary" id="test-conn-btn">Test Connection</button>
+        </div>
+        <div class="conn-status" id="conn-status"></div>
+      </div>
+
     </div>
-    <div class="conn-status" id="conn-status"></div>
 
     <div class="actions">
       <button class="ghost" id="step3-back-btn">Back</button>
@@ -702,9 +809,16 @@
     copyToClipboard(value, document.getElementById('sqa-users-copy-btn'));
   }
 
-  // ── Push command ──────────────────────────────────────────────────
+  // ── Push command (live-fills from the username / Space name inputs) ─
+  function updatePushCommand() {
+    const username = document.getElementById('hf-username').value.trim() || 'YOUR-USERNAME';
+    const spaceName = document.getElementById('hf-space-name').value.trim() || 'YOUR-SPACE-NAME';
+    document.getElementById('push-cmd-box').textContent =
+      `git remote add space https://huggingface.co/spaces/${username}/${spaceName}\ngit push space main`;
+  }
+
   function handleCopyPushCommand() {
-    const cmd = 'git remote add space https://huggingface.co/spaces/YOUR-USERNAME/YOUR-SPACE-NAME && git push space main';
+    const cmd = document.getElementById('push-cmd-box').textContent;
     copyToClipboard(cmd, document.getElementById('copy-push-cmd-btn'));
   }
 
@@ -876,7 +990,15 @@
     document.getElementById('production-url')?.addEventListener('blur', savePortalUrls);
 
     // Push command
+    document.getElementById('hf-username')?.addEventListener('input', updatePushCommand);
+    document.getElementById('hf-space-name')?.addEventListener('input', updatePushCommand);
     document.getElementById('copy-push-cmd-btn')?.addEventListener('click', handleCopyPushCommand);
+
+    // Skip to step 2
+    document.getElementById('skip-to-step2')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('walk-step-2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   });
 </script>
 </body>
