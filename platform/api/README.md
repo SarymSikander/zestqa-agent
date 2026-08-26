@@ -10,12 +10,15 @@ pinned: false
 
 # ZestQA Platform API
 
-Backend API for ZestQA Agent platform. Runs as a plain FastAPI app — no
-Gradio UI is mounted. `main.py` defines the FastAPI app and every
-`/health` / `/platform/*` route (see that file for the route list and their
-Supabase-JWT auth requirements). `app.py` is the entrypoint HF Spaces runs
-(`python app.py`, since there's no `app_file` override here to say
-otherwise): it imports `app` from `main.py` and starts it with `uvicorn`.
+Backend API for ZestQA Agent platform. `main.py` defines the FastAPI app and
+every `/health` / `/platform/*` route (see that file for the route list and
+their Supabase-JWT auth requirements). `app.py` is the entrypoint HF Spaces
+runs (`python app.py`, since there's no `app_file` override here to say
+otherwise): it starts FastAPI with `uvicorn` on port 7860 in a background
+thread, then launches a placeholder Gradio interface on port 7861 in the
+main thread. The Gradio UI itself isn't the point — `demo.launch()` just
+blocks so the process (and the daemon thread running FastAPI) stays alive;
+the public Space URL is served by FastAPI on 7860.
 
 ## Deploying
 
@@ -24,7 +27,7 @@ Push only `platform/api/` to the `zestqa-platform` HuggingFace Space:
 ```bash
 cd ~/Desktop/sqa-agent/platform/api
 git add .
-git commit -m "fix: run FastAPI directly without gradio import"
+git commit -m "fix: run FastAPI in thread alongside Gradio to keep Space alive"
 git push origin main --force
 ```
 
@@ -38,6 +41,6 @@ Also commit to GitHub:
 ```bash
 cd ~/Desktop/sqa-agent
 git add platform/api/
-git commit -m "fix: FastAPI without gradio"
+git commit -m "fix: keep Space alive with Gradio thread"
 git push origin main
 ```
