@@ -5,17 +5,17 @@ colorFrom: purple
 colorTo: blue
 sdk: gradio
 sdk_version: "4.42.0"
-app_file: app.py
 pinned: false
 ---
 
 # ZestQA Platform API
 
-Backend API for ZestQA Agent platform. Runs as a FastAPI app on a Gradio
-HuggingFace Space — `app.py` mounts a placeholder Gradio UI at `/ui` for the
-Space's health check, while `/health` and every `/platform/*` route are
-served by the underlying FastAPI app (see `app.py` for the route list and
-their Supabase-JWT auth requirements).
+Backend API for ZestQA Agent platform. Runs as a plain FastAPI app — no
+Gradio UI is mounted. `main.py` defines the FastAPI app and every
+`/health` / `/platform/*` route (see that file for the route list and their
+Supabase-JWT auth requirements). `app.py` is the entrypoint HF Spaces runs
+(`python app.py`, since there's no `app_file` override here to say
+otherwise): it imports `app` from `main.py` and starts it with `uvicorn`.
 
 ## Deploying
 
@@ -24,7 +24,7 @@ Push only `platform/api/` to the `zestqa-platform` HuggingFace Space:
 ```bash
 cd ~/Desktop/sqa-agent/platform/api
 git add .
-git commit -m "feat: ZestQA platform API on Gradio SDK"
+git commit -m "fix: run FastAPI directly without gradio import"
 git push origin main --force
 ```
 
@@ -38,6 +38,6 @@ Also commit to GitHub:
 ```bash
 cd ~/Desktop/sqa-agent
 git add platform/api/
-git commit -m "feat: ZestQA platform API on Gradio SDK"
+git commit -m "fix: FastAPI without gradio"
 git push origin main
 ```
