@@ -1,6 +1,7 @@
 import os
 from urllib.parse import urlparse
 
+import gradio as gr
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -315,3 +316,17 @@ async def provision_agent(req: ProvisionRequest, caller: dict = Depends(require_
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Gradio mount ──────────────────────────────────────────────────────────
+# HF Spaces with sdk: gradio run this file with `python app.py` — there's no
+# uvicorn command like the old docker-sdk setup had. Mounting a placeholder
+# Gradio UI under /ui satisfies the Space's health check / landing page while
+# every /platform/* and /health route above is served by the same FastAPI app.
+demo = gr.Interface(lambda x: "ZestQA Platform API is running.", "text", "text")
+app = gr.mount_gradio_app(app, demo, path="/ui")
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=7860)
