@@ -14,11 +14,12 @@ Backend API for ZestQA Agent platform. `main.py` defines the FastAPI app and
 every `/health` / `/platform/*` route (see that file for the route list and
 their Supabase-JWT auth requirements). `app.py` is the entrypoint HF Spaces
 runs (`python app.py`, since there's no `app_file` override here to say
-otherwise): it starts FastAPI with `uvicorn` on port 7860 in a background
-thread, then launches a placeholder Gradio interface on port 7861 in the
-main thread. The Gradio UI itself isn't the point — `demo.launch()` just
-blocks so the process (and the daemon thread running FastAPI) stays alive;
-the public Space URL is served by FastAPI on 7860.
+otherwise): it just calls `uvicorn.run(app, host="0.0.0.0", port=7860)`
+directly — no Gradio involved. That call already blocks until the server
+stops, which is what keeps the Space's process alive; nothing extra is
+needed for that. The Space still declares `sdk: gradio` in the frontmatter
+below, but that only picks which base build environment HF uses — it
+doesn't require the app itself to import or use `gradio`.
 
 ## Deploying
 
@@ -27,7 +28,7 @@ Push only `platform/api/` to the `zestqa-platform` HuggingFace Space:
 ```bash
 cd ~/Desktop/sqa-agent/platform/api
 git add .
-git commit -m "fix: run FastAPI in thread alongside Gradio to keep Space alive"
+git commit -m "fix: drop gradio, run uvicorn directly"
 git push origin main --force
 ```
 
@@ -41,6 +42,6 @@ Also commit to GitHub:
 ```bash
 cd ~/Desktop/sqa-agent
 git add platform/api/
-git commit -m "fix: keep Space alive with Gradio thread"
+git commit -m "fix: drop gradio for platform API"
 git push origin main
 ```
