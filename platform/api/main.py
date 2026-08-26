@@ -7,13 +7,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from supabase import Client, create_client
 
-SUPABASE_URL = os.environ["SUPABASE_URL"]
-SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
 HF_TOKEN = os.getenv("HF_TOKEN")
 HF_USERNAME = os.getenv("HF_USERNAME", "sarimsikander")
 VERCEL_TOKEN = os.getenv("VERCEL_TOKEN")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+_supabase_client: Client | None = None
+
+
+def get_supabase() -> Client:
+    global _supabase_client
+    if _supabase_client is None:
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_SERVICE_KEY")
+        if not url or not key:
+            raise HTTPException(status_code=500, detail="Supabase not configured")
+        _supabase_client = create_client(url, key)
+    return _supabase_client
 
 app = FastAPI(title="ZestQA Platform API")
 
@@ -44,7 +53,7 @@ def require_user(request: Request):
     """Validate the caller's Supabase JWT and return their user id + role."""
     token = _bearer_token(request)
     try:
-        result = supabase.auth.get_user(token)
+        result = get_supabase().auth.get_user(token)
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     user = getattr(result, "user", None)
@@ -52,7 +61,7 @@ def require_user(request: Request):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
     profile = (
-        supabase.table("profiles").select("role").eq("id", user.id).single().execute()
+        get_supabase().table("profiles").select("role").eq("id", user.id).single().execute()
     )
     role = profile.data["role"] if profile.data else "user"
     return {"id": user.id, "role": role}
@@ -101,7 +110,7 @@ class ThemeBody(BaseModel):
 
 @app.get("/platform/users/{user_id}/theme")
 def get_theme(user_id: str, caller: dict = Depends(require_self_or_admin)):
-    res = supabase.table("themes").select("*").eq("user_id", user_id).single().execute()
+    res = get_supabase().table("themes").select("*").eq("user_id", user_id).single().execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="No theme found for this user")
     return res.data
@@ -112,7 +121,7 @@ def save_theme(user_id: str, body: ThemeBody, caller: dict = Depends(require_sel
     updates = {k: v for k, v in body.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
-    res = supabase.table("themes").update(updates).eq("user_id", user_id).execute()
+    res = get_supabase().table("themes").update(updates).eq("user_id", user_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="No theme row for this user")
     return res.data[0]
@@ -135,7 +144,7 @@ class ThemeUpsertRequest(BaseModel):
 async def upsert_theme(req: ThemeUpsertRequest, caller: dict = Depends(require_user)):
     _require_self_or_admin_for(req.user_id, caller)
     try:
-        supabase.table("themes").upsert({
+        get_supabase().table("themes").upsert({
             "user_id": req.user_id,
             "sidebar_start": req.sidebar_start,
             "sidebar_end": req.sidebar_end,
@@ -155,7 +164,7 @@ async def upsert_theme(req: ThemeUpsertRequest, caller: dict = Depends(require_u
 @app.get("/platform/theme/{user_id}")
 async def get_theme_by_id(user_id: str, caller: dict = Depends(require_self_or_admin)):
     try:
-        result = supabase.table("themes").select("*").eq("user_id", user_id).single().execute()
+        result = get_supabase().table("themes").select("*").eq("user_id", user_id).single().execute()
         return result.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -166,7 +175,7 @@ async def get_theme_by_id(user_id: str, caller: dict = Depends(require_self_or_a
 @app.get("/platform/profile/{user_id}")
 async def get_profile(user_id: str, caller: dict = Depends(require_self_or_admin)):
     try:
-        result = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
+        result = get_supabase().table("profiles").select("*").eq("id", user_id).single().execute()
         return result.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -185,7 +194,7 @@ class IntegrationsBody(BaseModel):
 @app.get("/platform/users/{user_id}/integrations")
 def get_integrations(user_id: str, caller: dict = Depends(require_self_or_admin)):
     res = (
-        supabase.table("integrations").select("*").eq("user_id", user_id).single().execute()
+        get_supabase().table("integrations").select("*").eq("user_id", user_id).single().execute()
     )
     if not res.data:
         raise HTTPException(status_code=404, detail="No integrations row for this user")
@@ -199,7 +208,7 @@ def update_integrations(
     updates = {k: v for k, v in body.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
-    res = supabase.table("integrations").update(updates).eq("user_id", user_id).execute()
+    res = get_supabase().table("integrations").update(updates).eq("user_id", user_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="No integrations row for this user")
     return res.data[0]
@@ -209,7 +218,7 @@ def update_integrations(
 
 @app.get("/platform/admin/users")
 def list_users(caller: dict = Depends(require_admin)):
-    res = supabase.table("profiles").select("*").execute()
+    res = get_supabase().table("profiles").select("*").execute()
     return res.data
 
 
@@ -302,7 +311,7 @@ async def provision_agent(req: ProvisionRequest, caller: dict = Depends(require_
         dashboard_url = f"https://{space_name}.vercel.app"
 
         # Step 3 — Save to Supabase
-        supabase.table("profiles").update({
+        get_supabase().table("profiles").update({
             "hf_space_url": hf_space_url,
             "dashboard_url": dashboard_url,
         }).eq("id", user_id).execute()
